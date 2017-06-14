@@ -1,0 +1,73 @@
+simulator( 'spectre )
+design(  "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/netlist")
+resultsDir( "/tmp/Top_V2_file_adc/spectre/schematic" )
+modelFile(
+    '("/home/ecelrc/students/st/cadence/models/spectre/nmos.m" "")
+    '("/home/ecelrc/students/st/cadence/models/spectre/pmos.m" "")
+)
+analysis('tran ?start "0n" ?stop "8n" ?errpreset "liberal")
+desVar(   "res_adc" 10K )
+desVar(   "txsw_wid_4" 7)
+desVar(   "Wid" 200n    )
+desVar(   "P" 2 )
+desVar(   "N" 1 )
+desVar(   "Len" 45n     )
+desVar(   "DAC_b7" 128  )
+desVar(   "DAC_b6" 64   )
+desVar(   "DAC_b5" 32   )
+desVar(   "DAC_b4" 16   )
+desVar(   "DAC_b3" 8    )
+desVar(   "DAC_b2" 4    )
+desVar(   "DAC_b1" 2    )
+desVar(   "DAC_b0" 1    )
+desVar(   "currentRes" 10u       ) ;1u for i8, 10u for i5
+desVar(   "txsw_wid_2" 1        )
+desVar(   "txsw_wid_1" 7        ) ; TODO: may need to incr with move from 5b to 8b
+    desVar( "Vbias_diffpair" 200m ) ; edited 11.17.13, 200m
+desVar( "res_dac_dmp" 512 )
+desVar(   "res_ntwk" 1.16       ) ;  6 for w4, 1.36 for w6
+    desVar(   "res_add" 9.375k ) ; 9.375k,10k ; edited 11.17.13
+ desVar(   "diffpair_biasI" 10u   ) ; 10u ; edited 11.17.13
+    desVar(   "diffamp_biasI" 10u   ) ; 10u ; edited 11.17.13
+desVar(   "v_d_d" 1.2   )
+desVar(   "txsw_wid_3" 1        )
+desVar(   "ltchPw" .2n )
+desVar(   "ltchPer" 1n  )
+desVar(   "ltchDelay" .875n )
+
+;save('i "I2.I2.P0:d" "I2.I2P1:d" "I2.I2.P2:d" "I2.I2.P3:d" "I2.I2.P4:d" "I2.I2.P5:d" "I2.I2.P6:d" "I2.I2.P7:d" )
+;save('i "I10.P4:d" "I10.P8:d" "R0:1" "I2.I11.R0:1" "I2.I8.R0:1" "V0:1")
+;save('v "I2.I11.Iout_resDAC" "I2.I8.Iout_resDAC" "I10.AddOut0" "Vout0" "Vout1" "Vout2" "Vout3" "Vout4" "Vout5" "Vout6" "Vout7" "Vout8" "Vout9" "Vout10" "Vout11" "Vout12" "Vout13" "Vout14" "Vout15" "Vout16" "Vout17" "Vout18" "Vout19" "Vout20" "Vout21" "Vout22" "Vout23" "Vout24" "Vout25" "Vout26" "Vout27" "Vout28" "Vout29" "Vout30" "Vout31" "Vout32" "Vout33" "Vout34" "Vout35" "Vout36" "Vout37" "Vout38" "Vout39" "Vout40" "Vout41" "Vout42" "Vout43" "Vout44" "Vout45" "Vout46" "Vout47" "Vout48" "Vout49" "Vout50" "Vout51" "Vout52" "Vout53" "Vout54" "Vout55" "Vout56" "Vout57" "Vout58" "Vout59" "Vout60" "Vout61")
+
+save('i "I10.P4:d" "I10.P8:d" "I42.I8.R0:1" "V0:1")
+save('v "I10.AddOut0" "I10.AddOut0_n" "I10.V0in" "Vout0" "Vout1" "Vout2" "Vout3" "Vout4" "Vout5" "Vout6" "Vout7" "Vout8" "Vout9" "Vout10" "Vout11" "Vout12" "Vout13" "Vout14" "Vout15" "Vout16" "Vout17" "Vout18" "Vout19" "Vout20" "Vout21" "Vout22" "Vout23" "Vout24" "Vout25" "Vout26" "Vout27" "Vout28" "Vout29" "Vout30")
+
+save('v "Vin_adc")
+
+temp( 27 )
+run()
+selectResult( 'tran )
+
+; added isca 2013
+plot(getData("V0:1") getData("Vin_adc") getData("I10.AddOut0") getData("I10.AddOut0_n") getData("I10.V0in") getData("I10.P4:d") getData("I10.P8:d") getData("I42.I8.R0:1"))
+
+ocnPrint( ?output "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/avg_power.txt" average(getData("V0:1")) )
+
+ocnPrint( ?output "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/probe_out.txt" v("I10.AddOut0") v("I10.AddOut0_n") v("I10.V0in") i("I10.P4:d") i("I10.P8:d") i("I42.I8.R0:1") v("Vin_adc") ?precision 16 ?numberNotation 'scientific ?from 1.1n ?to 8n ?step 1n )
+
+ocnPrint( ?output "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/vout.csv" v("net0879") v("Vout61") v("Vout60") v("Vout59") v("Vout58") v("Vout57") v("Vout56") v("Vout55") v("Vout54") v("Vout53") v("Vout52") v("Vout51") v("Vout50") v("Vout49") v("Vout48") v("Vout47") v("Vout46") v("Vout45") v("Vout44") v("Vout43") v("Vout42") v("Vout41") v("Vout40") v("Vout39") v("Vout38") v("Vout37") v("Vout36") v("Vout35") v("Vout34") v("Vout33") v("Vout32") v("Vout31") v("Vout30") v("Vout29") v("Vout28") v("Vout27") v("Vout26") v("Vout25") v("Vout24") v("Vout23") v("Vout22") v("Vout21") v("Vout20") v("Vout19") v("Vout18") v("Vout17") v("Vout16") v("Vout15") v("Vout14") v("Vout13") v("Vout12") v("Vout11") v("Vout10") v("Vout9") v("Vout8") v("Vout7") v("Vout6") v("Vout5") v("Vout4") v("Vout3") v("Vout2") v("Vout1") v("Vout0") ?precision 16 ?numberNotation 'scientific ?from 1.1n ?to 8n ?step 1n )
+; TODO: print additional signals?? (the ones plotted above)
+
+;plot(getData("I10.P4:d") getData("I10.P8:d") getData("R0:1") getData("I2.I11.R0:1") getData("I2.I8.R0:1") getData("V0:1"))
+;plot(getData("I2.I11.Iout_resDAC") getData("I2.I8.Iout_resDAC") getData("I10.AddOut0"))
+;;hardCopyOptions(?hcPlotterName "epsf" ?hcPaperSize "8x8" ?hcOutputFile "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/myplot.ps" ?hcTmpDir "/tmp/st")
+;hardCopyOptions(?hcOutputFile "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/myplot.ps" ?hcTmpDir "/tmp/st")
+;hardCopy()
+;ocnPrint( ?output "./testbench-i-6-w-8-per-1n-stop-8n-thwomp.ece.utexas.edu-04_Dec_17-51/myOutputFile" v("Vout61") v("Vout60") v("Vout59") v("Vout58") v("Vout57") v("Vout56") v("Vout55") v("Vout54") v("Vout53") v("Vout52") v("Vout51") v("Vout50") v("Vout49") v("Vout48") v("Vout47") v("Vout46") v("Vout45") v("Vout44") v("Vout43") v("Vout42") v("Vout41") v("Vout40") v("Vout39") v("Vout38") v("Vout37") v("Vout36") v("Vout35") v("Vout34") v("Vout33") v("Vout32") v("Vout31") v("Vout30") v("Vout29") v("Vout28") v("Vout27") v("Vout26") v("Vout25") v("Vout24") v("Vout23") v("Vout22") v("Vout21") v("Vout20") v("Vout19") v("Vout18") v("Vout17") v("Vout16") v("Vout15") v("Vout14") v("Vout13") v("Vout12") v("Vout11") v("Vout10") v("Vout9") v("Vout8") v("Vout7") v("Vout6") v("Vout5") v("Vout4") v("Vout3") v("Vout2") v("Vout1") v("Vout0") v("I2.I11.Iout_resDAC") v("I2.I8.Iout_resDAC") v("I10.AddOut0") i("I10.P4:d") i("I10.P8.d") i("R0:1") i("I2.I11.R0:1") i("I2.I8.R0:1") i("V0:1") ?precision 16 ?numberNotation 'scientific ?from 1.1n ?to 8n ?step 1n )
+
+exit
+
+;plot(getData("I2.I2.P0:d") getData("I2.I2.P1:d") getData("I2.I2.P2:d") getData("I2.I2.P3:d") getData("I2.I2.P4:d") getData("I2.I2.P5:d") getData("I2.I2.P6:d")  getData("I2.I2.P7:d"))
+;plot(getData("I10.P4:g") getData("I10.P8:g"))
+;v("Vout61") v("Vout60") v("Vout59") v("Vout58") v("Vout57") v("Vout56") v("Vout55") v("Vout54") v("Vout53") v("Vout52") v("Vout51") v("Vout50") v("Vout49") v("Vout48") v("Vout47") v("Vout46") v("Vout45") v("Vout44") v("Vout43") v("Vout42") v("Vout41") v("Vout40") v("Vout39") v("Vout38") v("Vout37") v("Vout36") v("Vout35") v("Vout34") v("Vout33") v("Vout32") v("Vout31") v("Vout30") v("Vout29") v("Vout28") v("Vout27") v("Vout26") v("Vout25") v("Vout24") v("Vout23") v("Vout22") v("Vout21") v("Vout20") v("Vout19") v("Vout18") v("Vout17") v("Vout16") v("Vout15") v("Vout14") v("Vout13") v("Vout12") v("Vout11") v("Vout10") v("Vout9") v("Vout8") v("Vout7") v("Vout6") v("Vout5") v("Vout4") v("Vout3") v("Vout2") v("Vout1") v("Vout0")
+
